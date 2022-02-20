@@ -101,10 +101,12 @@
         android:id="@+id/textView6"
         android:layout_width="143dp"
         android:layout_height="56dp"
+        android:layout_marginStart="39dp"
+        android:layout_marginTop="5dp"
         android:text="Вожатский форум"
         android:textSize="20sp"
-        tools:layout_editor_absoluteX="234dp"
-        tools:layout_editor_absoluteY="560dp" />
+        app:layout_constraintStart_toEndOf="@+id/textView2"
+        app:layout_constraintTop_toBottomOf="@+id/imageButton6" />
 
     <ImageButton
         android:id="@+id/imageButton3"
@@ -138,7 +140,7 @@
         android:layout_height="130dp"
         android:layout_marginStart="33dp"
         android:layout_marginTop="8dp"
-        android:onClick="showAnalis"
+        android:onClick="showForum"
         android:scaleType="fitCenter"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.111"

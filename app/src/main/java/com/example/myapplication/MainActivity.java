@@ -92,4 +92,8 @@ public class MainActivity extends AppCompatActivity {
         Intent intent = new Intent(this, DetachmentActivityView.class);
         startActivity(intent);
     }
+    public void showForum(View view){
+        Intent intent = new Intent(this,ForumActivity.class);
+        startActivity(intent);
+    }
 }
