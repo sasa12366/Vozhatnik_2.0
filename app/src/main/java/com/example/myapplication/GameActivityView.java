@@ -23,7 +23,7 @@ public class GameActivityView extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_game_view);
-
+        setTitle("Игры");
         userList = findViewById(R.id.list);
         userList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -55,11 +55,6 @@ public class GameActivityView extends AppCompatActivity {
         userList.setAdapter(userAdapter);
     }
 
-    // по нажатию на кнопку запускаем UserActivity для добавления данных
-    public void add(View view) {
-        Intent intent = new Intent(this, UserActivity.class);
-        startActivity(intent);
-    }
 
     @Override
     public void onDestroy() {

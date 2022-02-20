@@ -19,8 +19,6 @@ public class MysicActivity extends AppCompatActivity {
 TextView yearBox;
    EditText nameBox;
  // EditText yearBox;
-    Button delButton;
-    Button saveButton;
     DatabaseHelper sqlHelper;
     SQLiteDatabase db;
     Cursor userCursor;
@@ -31,8 +29,6 @@ TextView yearBox;
         setContentView(R.layout.activity_mysic);
         nameBox = findViewById(R.id.name);
         yearBox = findViewById(R.id.year);
-        delButton = findViewById(R.id.deleteButton);
-        saveButton = findViewById(R.id.saveButton);
         sqlHelper = new DatabaseHelper(this);
         db = sqlHelper.open();
       yearBox.setMovementMethod(new ScrollingMovementMethod());
@@ -50,27 +46,8 @@ TextView yearBox;
             yearBox.setText(userCursor.getString(0));
             setTitle(userCursor.getString(2));
             userCursor.close();
-        } else {
-            // скрываем кнопку удаления
-            delButton.setVisibility(View.GONE);
-        }}
+        } }
    //   loadDoc();    }
-    public void save(View view){
-        ContentValues cv = new ContentValues();
-        cv.put(DatabaseHelper.COLUMN_NAMEM, nameBox.getText().toString());
-        cv.put(DatabaseHelper.COLUMN_TEXT, yearBox.getText().toString());
-
-        if (userId > 0) {
-            db.update(DatabaseHelper.TABLE, cv, DatabaseHelper.COLUMN_ID + "=" + userId, null);
-        } else {
-            db.insert(DatabaseHelper.TABLE, null, cv);
-        }
-        goHome();
-    }
-    public void delete(View view){
-        db.delete(DatabaseHelper.TABLE, "_id = ?", new String[]{String.valueOf(userId)});
-        goHome();
-    }
     private void goHome(){
         // закрываем подключение
         db.close();
@@ -79,5 +56,34 @@ TextView yearBox;
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
         startActivity(intent);
     }
+    public void avtoScroll(View view){
+        yearBox.setMovementMethod(new ScrollingMovementMethod());
+        int totalLineCount = yearBox.getLineCount();
+        int lineHeight = yearBox.getLineHeight();
+        MyThread0 pr=new MyThread0();
+        pr.start();
+    }
+    class MyThread0 extends Thread{
+        int totalLineCount = yearBox.getLineCount();
+        int lineHeight = yearBox.getLineHeight();
+        int totlaHeight = totalLineCount * lineHeight;
 
+        @Override
+        public void run() {
+            super.run();
+            int i=0;
+            while (i<totlaHeight) {
+
+                try {
+                    Thread.sleep(1000);
+                    yearBox.scrollTo(0, i+50);
+                    i+=50;
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+
+
+            }
+        }
+    }
 }
