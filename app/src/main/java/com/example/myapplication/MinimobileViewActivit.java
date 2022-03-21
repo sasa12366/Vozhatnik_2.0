@@ -18,7 +18,9 @@ import android.widget.TextView;
 public class MinimobileViewActivit extends AppCompatActivity {
 
         TextView yearBox;
+    TextView time;
         EditText nameBox;
+        boolean isrun=true;
         // EditText yearBox;
         DatabaseHelper sqlHelper;
         SQLiteDatabase db;
@@ -30,6 +32,7 @@ public class MinimobileViewActivit extends AppCompatActivity {
             setContentView(R.layout.activity_minimobile_view);
             nameBox = findViewById(R.id.name);
             yearBox = findViewById(R.id.year);
+            time=findViewById(R.id.textView2);
             sqlHelper = new DatabaseHelper(this);
             db = sqlHelper.open();
             yearBox.setMovementMethod(new ScrollingMovementMethod());
@@ -64,6 +67,8 @@ public class MinimobileViewActivit extends AppCompatActivity {
             int totlaHeight = totalLineCount * lineHeight;
             MyThread pr=new MyThread();
             pr.start();
+            MyThread2 thread2=new MyThread2();
+            thread2.start();
         }
     class MyThread extends Thread{
         int totalLineCount = yearBox.getLineCount();
@@ -74,12 +79,41 @@ public class MinimobileViewActivit extends AppCompatActivity {
         public void run() {
             super.run();
             int i=0;
+            isrun=true;
             while (i<totlaHeight) {
 
                 try {
                     Thread.sleep(1000);
                     yearBox.scrollTo(0, i+50);
                     i+=50;
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+
+
+            }
+            isrun=false;
+        }
+    }
+    class MyThread2 extends Thread{
+        int CurrentSecondCount = 0;
+        int CurrentMinutsCounts = 0;
+
+
+        @Override
+        public void run() {
+            super.run();
+            int i=0;
+            while (isrun) {
+
+                try {
+                    Thread.sleep(1000);
+                    CurrentSecondCount++;
+                    if(CurrentSecondCount>=60){
+                        CurrentMinutsCounts++;
+                        CurrentSecondCount=0;
+                    }
+                    time.setText(CurrentMinutsCounts/10+CurrentMinutsCounts%10+":"+CurrentSecondCount/10+CurrentSecondCount%10);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
