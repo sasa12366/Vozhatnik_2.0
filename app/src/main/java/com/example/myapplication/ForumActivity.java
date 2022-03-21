@@ -4,7 +4,9 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Context;
 import android.content.Intent;
+import android.net.ConnectivityManager;
 import android.text.format.DateFormat;
 import android.view.View;
 import android.os.Bundle;
@@ -23,6 +25,16 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.rpc.context.AttributeContext;
 
+import java.nio.charset.StandardCharsets;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
+
+import javax.crypto.BadPaddingException;
+import javax.crypto.Cipher;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
+import javax.crypto.spec.SecretKeySpec;
+
 public class ForumActivity extends AppCompatActivity {
 
     private static int SIGN_IN_CODE=1;
@@ -34,6 +46,7 @@ public class ForumActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
         if(requestCode==SIGN_IN_CODE){
             if(resultCode==RESULT_OK){
+
                 Snackbar.make(activity_main,"Вы авторизованы",Snackbar.LENGTH_LONG).show();
                 displayAllMessages();
 
@@ -51,14 +64,23 @@ public class ForumActivity extends AppCompatActivity {
         setContentView(R.layout.activity_forum);
         activity_main=findViewById(R.id.activity_main);
         sendBtn=findViewById(R.id.btnSend);
+
         sendBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
                 EditText textFild=findViewById(R.id.messageField);
+
                 if(textFild.getText().toString()=="")
                     return;
+                if(isInternetOn()==false) {
+                    Snackbar.make(activity_main, "Нет подключения к интернету! Сообщение не отправлено.", Snackbar.LENGTH_LONG).show();
+                    return;
+                }
+
+                String s1=textFild.getText().toString();
                 FirebaseDatabase.getInstance().getReference().push().setValue(new Message(
-                        FirebaseAuth.getInstance().getCurrentUser().getDisplayName(),textFild.getText().toString()
+                        FirebaseAuth.getInstance().getCurrentUser().getDisplayName(),s1
                 ));
                 textFild.setText("");
             }
@@ -68,6 +90,10 @@ public class ForumActivity extends AppCompatActivity {
             startActivityForResult(AuthUI.getInstance().createSignInIntentBuilder().build(),SIGN_IN_CODE);
         }
         else {
+            if(isInternetOn()==false) {
+                Snackbar.make(activity_main, "Соединение отсутствует! Подключите интернет", Snackbar.LENGTH_LONG).show();
+                return;
+            }
             Snackbar.make(activity_main, "Вы авторизованы", Snackbar.LENGTH_LONG).show();
             displayAllMessages();
         }
@@ -75,7 +101,7 @@ public class ForumActivity extends AppCompatActivity {
 
     private void displayAllMessages() {
         ListView listOfMessages=findViewById(R.id.list_of_messages);
-        Query query = FirebaseDatabase.getInstance().getReference();
+        Query query = FirebaseDatabase.getInstance().getReference("1");
         FirebaseListOptions<Message> options =
                 new FirebaseListOptions.Builder<Message>()
                         .setQuery(query, Message.class)
@@ -83,8 +109,10 @@ public class ForumActivity extends AppCompatActivity {
                         .setLifecycleOwner(this)
                         .build();
         adapter = new FirebaseListAdapter<Message>(options){
+
             @Override
             protected void populateView(@NonNull View v, @NonNull Message model, int position) {
+
                 TextView mess_user,mess_time,mess_text;
                 mess_user=v.findViewById(R.id.message_user);
                 mess_time=v.findViewById(R.id.message_time);
@@ -96,5 +124,29 @@ public class ForumActivity extends AppCompatActivity {
         };
 
         listOfMessages.setAdapter(adapter);
+    }
+    public boolean isInternetOn() {
+
+        // get Connectivity Manager object to check connection
+        ConnectivityManager connec =
+                (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+
+        // Check for network connections
+        if (connec.getNetworkInfo(0).getState() == android.net.NetworkInfo.State.CONNECTED ||
+                connec.getNetworkInfo(0).getState() == android.net.NetworkInfo.State.CONNECTING ||
+                connec.getNetworkInfo(1).getState() == android.net.NetworkInfo.State.CONNECTING ||
+                connec.getNetworkInfo(1).getState() == android.net.NetworkInfo.State.CONNECTED) {
+
+
+            return true;
+
+        } else if (
+                connec.getNetworkInfo(0).getState() == android.net.NetworkInfo.State.DISCONNECTED ||
+                        connec.getNetworkInfo(1).getState() == android.net.NetworkInfo.State.DISCONNECTED) {
+
+
+            return false;
+        }
+        return false;
     }
 }

@@ -3,28 +3,21 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
-    tools:context=".DetachmentActivity">
+    >
 
     <EditText
         android:id="@+id/name"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="ФИО" />
-
-    <EditText
-        android:id="@+id/number"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Телефон" />
-
+        android:hint="Введите название" />
     <EditText
         android:id="@+id/year"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="start"
-        android:hint="Введите заметки"
+        android:hint="Введите анализ дня"
         android:inputType="textMultiLine"
-        android:lines="15"
+        android:lines="5"
         android:padding="2dp" />
 
     <Button
