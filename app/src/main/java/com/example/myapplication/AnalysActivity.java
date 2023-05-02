@@ -12,7 +12,7 @@ import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
 
 public class AnalysActivity extends AppCompatActivity {
-
+        //Проект
         ListView userList;
         DatabaseHelper databaseHelper;
         SQLiteDatabase db;
